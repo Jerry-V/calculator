@@ -1,0 +1,32 @@
+#mainContainer {
+    display: inline-block;
+    border: black solid 5px;
+}
+
+#buttonsContainer{
+    display: flex;
+    border: red solid 5px;
+}
+
+#numbersContainer{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+#operatorsContainer{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+#display{
+    font-size: 30px;
+    font-family: monospace;
+    text-align: right;
+}
+
+.btn{
+    width: 50px;
+    height: 50px;
+    font-size: 30px;
+    font-family:monospace;
+}
