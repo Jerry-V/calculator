@@ -1,31 +1,34 @@
 function add(a,b){
-    return a+b;
+    return a + b;
 }
 
 function subtract(a,b){
-    return a-b;
+    return a - b;
 }
 
 function multiply(a,b){
-    return a*b;
+    return a * b;
 }
 
 function divide(a,b){
-    return a/b;
+    return a / b;
 }
 
 function operate(operator,num1,num2){
     let answer = 0;
-    if (operator == "+") {
+    if (operator === "+") {
         answer = add(num1,num2);
-    } else if (operator == "-") {
+    } else if (operator === "-") {
         answer = subtract(num1,num2);
-    } else if (operator == "*") {
+    } else if (operator === "*") {
         answer = multiply(num1,num2);
-    } else if (operator == "/") {
+    } else if (operator === "/") {
         answer = divide(num1,num2);
+    } else if (operator === "=") {
+        answer = num1;
+        console.log("Operator =");
     } else {
-        answer = "Error-OpF";
+        answer = "Error-Operate";
     }
     return answer;
 }
@@ -35,20 +38,22 @@ console.log(allButtons);
 // addEventListener will not work if the first portion of its inputs is wrong (like 'onclick' instead of 'click')
 allButtons.forEach(item => {item.addEventListener('click', calculator)}); 
 
+const display = document.getElementById("display");
+display.innerText = 0;
+
 let num1 = undefined;
 let num2 = undefined;
-let operator = undefined;
-let numString = undefined;
+let numString = '';
+let op =  undefined;
 
-const display = document.getElementById("display");
-display.innerText = '0';
-
-function resetAll() {
+function resetAll(){
     num1 = undefined;
     num2 = undefined;
-    operator = undefined;
-    numString = undefined;
+    numString = '';
+    op = undefined;
 }
+
+
 
 function btnChoice(e){
     let input = e.target.id;
@@ -65,6 +70,7 @@ function btnChoice(e){
         case 'btn-8': x = 8; break;
         case 'btn-9': x = 9; break;
         // operators
+        case 'btn-sign':    x = 'Sign'; break;
         case 'btn-add':     x = '+'; break;
         case 'btn-sub':     x = '-'; break;
         case 'btn-mult':    x = '*'; break;
@@ -79,77 +85,192 @@ function btnChoice(e){
 }
 
 function calculator(e){
-    let x = undefined;
-    x = btnChoice(e);
+    let x = btnChoice(e);
     
-    if (Number.isInteger(x) && x == 0 && numString == undefined) {
-        // Spamming 0 at start: Do Nothing
-    } else if (Number.isInteger(x) && numString == undefined) {
-        // First non-zero number
-        numString = `${x}`;
-        display.innerText = numString;
-    } else if (Number.isInteger(x) && numString != undefined) {
-        // Any number (including 0) after first non-zero number
+    if (x === 0 && numString === '' && op === undefined) {
+    } else if (Number.isInteger(x)) {
         numString += `${x}`;
         display.innerText = numString;
+        console.log(`extend string with ${x}`);
     } else {
-        // Operation button pressed
         switch (x){
-            case 'Delete':
-                if (numString == undefined) {
-                    // Do nothing
-                } else if (numString.length > 1){
-                    numString = numString.slice(0,-1);
+            case '.':
+                if (/\./.test(numString)) {
+                } else if (numString === '') {
+                    numString = '0.';
                     display.innerText = numString;
-                } else if (numString.length == 1) {
-                    display.innerText = '0';
-                    resetAll();
-                } else if (numString.length == 0) {
-                    display.innerText = 'Delete Error 1';
                 } else {
-                    display.innerText = 'Delete Error 2';
+                    numString += '.';
+                    display.innerText = numString;
+                }
+                break;
+            case 'Sign':
+                if (numString === '0' || (numString === '' && num1 === 0)) {
+                    console.log('Sign: do nothing');
+                } else if (/\-/.test(numString)){
+                    numString = numString.slice(1);
+                    display.innerText = numString;
+                    console.log('Sign: sign remove');
+                } else if (numString !== '') {
+                    numString = '-' + numString;
+                    display.innerText = numString;
+                    console.log('Sign: sign add');
+                } else {
+                    // Sign change on previously calculated answer
+                    num1 *= -1;
+                    display.innerText = num1;
+                    console.log('Sign: else');
+                }
+                break;
+            case 'Delete':
+                if (numString === '' || numString === '0') {
+                    console.log('Delete: no number');
+                } else if (/\-/.test(numString)) {
+                    if (numString.length > 2){
+                        numString = numString.slice(0,-1);
+                        display.innerText = numString;
+                        console.log('Delete (-): > 2 length');
+                    } else {
+                        numString = '';
+                        display.innerText = '0';
+                        console.log('Delete (-): <= 2 length');
+                    }
+                } else {
+                    if (numString.length > 1) {
+                        numString = numString.slice(0,-1);
+                        display.innerText = numString;
+                        console.log('Delete (+): > 1 length');
+                    } else {
+                        numString = '';
+                        display.innerText = '0';
+                        console.log('Delete (+): <= 1 length');
+                    }
                 }
                 break;
             case 'Clear':
                 resetAll();
                 display.innerText = '0';
-                break;
-            case '.':
-                // https://www.w3schools.com/jsref/jsref_regexp_test.asp
-                if (/\./.test(numString)){
-                    // Do nothing if decimal point detected
-                } else if (numString == undefined){
-                    // Decimal point is first button pressed
-                    numString = '0.'
-                    display.innerText = numString;
-                } else {
-                    // Add decimal point
-                    numString += '.'
-                    display.innerText = numString;
-                }
-                break;
-            case '+':
-                break;
-            case '-':
-                break;
-            case '*':
-                break;
-            case '/':
+                console.log('Clear');
                 break;
             case '=':
+                if (op === undefined) {
+                    console.log('= 01');
+                    if (numString !== '') {
+                        // nothing
+                        console.log('no op yet');
+                    }
+                } else if (op !== undefined) {
+                    console.log('= 02');
+                    
+                    if (numString === '') {
+                        num2 = num1;
+                        console.log('no numString');
+                    } else {
+                        num2 = parseFloat(numString);
+                        console.log('yes numString');
+                    }
+                    console.log(`Before = op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                    num1 = operate(op,num1,num2);
+                    display.innerText = num1;
+                    
+                    numString = `${num1}`;
+                    op = undefined;
+                    num1 = undefined;
+                    num2 = undefined;
+                    console.log(`After = op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                } else {
+                    console.log('Error in = code');
+                }
+                break;
+                
+            // Determine desired functionality of Divide by Zero
+            // place same error into = code (or a function that can work in both)
+            // Limit the length of result calculated
+            // Basic funtionality seems to work
+            case '+':
+            case '*':
+            case '/':
+            case '-':
+                
+                if (op === undefined) {
+                    if (numString === '') {
+                        numString = '0';
+                    }
+                    op = x;
+                    console.log(`sign defined as ${op}`);
+                    num1 = parseFloat(numString);
+                    numString = '';
+                } else {
+                    console.log(`01 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                    if (numString === '') {
+                        num2 = num1;
+                        console.log('A');
+                    }
+                    else {
+                        num2 = parseFloat(numString);
+                        console.log('B');
+                    }
+                    console.log(`02 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                    num1 = operate(op,num1,num2);
+                    console.log(`03 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                    
+                    // SHOULD be copied in = section ***** MAKE SURE TO UPDATE
+                    // divide by zero error
+                    // Catches dividing by zero and the edge case of num1 = NaN
+                    if ((x === '/' && Number.isNaN(num1)) || Number.isNaN(num1) || num1 === Infinity) {
+                        display.innerText = 'Divided by Zero';
+                        console.log('Divide by zero');
+                        num1 = 0;
+                        num2 = 0;
+                        resetAll();
+                    } else {
+                        console.log('Not divide by zero');
+                        display.innerText = num1;
+                        op = x; // Allows stringing together multiple operators without using "="
+                    }
+                    
+                    numString = '';
+                    console.log(`Next sign: ${op}`);
+                    console.log(`04 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                }
                 break;
         }
     }
-    
-    // else if (operator == undefined){
-    //     // First time pressing an operator
-    //     operator = x;
-    //     num1 = parseFloat(numString);
-    //     display.innerText = `${num1} & ${operator}`;
-    // } else if (x == operator){
-    //     // Selecting 
-    //     display.innerText = `Same x: ${x} op: ${operator}`;
-    // } else if (x != operator) {
-    //     display.innerText = `Not Same x: ${x} op: ${operator}`;
-    // }
 }
+
+/*
+                // op being undefined/defined determines whether the calculation goes through
+                if (op === undefined) {
+                    if (numString === '') {
+                        numString = '0';
+                        console.log('set numString to 0');
+                    }
+                    op = x;
+                    num1 = parseFloat(numString);
+                    
+                    console.log(`Setting up 01 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                    num2 = num1;
+                    numString = '';
+                    console.log(`Setting up 02 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                } else {
+                    if (num1 === undefined) {num1 = 0;}
+                    if (num2 === undefined) {num2 = 0;}
+                    if (numString === '') {
+                        numString = '0';
+                        console.log('set numString to 0');
+                    }
+                    op = x;
+                    num2 = parseFloat(numString);
+                    console.log(`Before Calc op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                    
+                    num1 = operate(op,num1,num2);
+                    display.innerText = num1;
+                    numString = `${num1}`;
+                    console.log(`After Calc op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                    
+                    op = '';
+                    numString = '';
+                    console.log(`Reset Calc op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                }
+                break;
+*/
