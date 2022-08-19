@@ -14,6 +14,8 @@ function divide(a,b){
     return a / b;
 }
 
+let maxInputLength = 10;
+
 function operate(operator,num1,num2){
     let answer = 0;
     if (operator === "+") {
@@ -29,14 +31,93 @@ function operate(operator,num1,num2){
     }
     // Round to a specific number of significant digits
     // https://www.w3schools.com/jsref/jsref_toprecision.asp
-    answer = answer.toPrecision(8);
+    
+    // Issues with too many trailing zeros or outputting too large a number
+    //answer = parseFloat(answer);
+    console.log(`Answer Before: ${answer}`);
+    //answer = answer.toPrecision(precision);
+    //answer = answer.toFixed(0);
+    console.log(`Answer After:  ${answer}`);
     return answer;
 }
 
 const allButtons = document.querySelectorAll('.btn');
-console.log(allButtons);
+//console.log(allButtons);
 // addEventListener will not work if the first portion of its inputs is wrong (like 'onclick' instead of 'click')
 allButtons.forEach(item => {item.addEventListener('click', calculator)}); 
+
+// Detecting keyboard buttons in javascript
+// https://stackoverflow.com/questions/16089421/how-do-i-detect-keypresses-in-javascript
+// https://www.techcoil.com/blog/how-to-detect-keyboard-presses-made-to-the-browser-screen-with-javascript/
+// https://howtodoinjava.com/jquery/jquery-difference-between-keypress-and-keydown-events/
+
+document.addEventListener('keydown', calculator);
+
+/*
+document.addEventListener('keydown', onKeyDown);
+function onKeyDown(e) {
+    var keyCode = e.keyCode;
+    var key = e.key;
+    // Lets you see the code livetime
+    console.log(`Down  Code: ${keyCode} Key: ${key}`);
+}
+
+document.addEventListener('keypress', onKeyPress);
+function onKeyPress(e) {
+    var keyCode = e.keyCode;
+    var key = e.key;
+    // Lets you see the code livetime
+    console.log(`Press Code: ${keyCode} Key: ${key}`);
+}
+*/
+
+function btnChoice(e){
+    let input;
+    let shiftPressed;
+    
+    // Lets you see the code livetime
+    //console.log(`Down  Code: ${keyCode} Key: ${key}`);
+    if (e.target.id) {
+        input = e.target.id;
+    }
+    // Keyboard input needs to be in its own if statement or button inputs always overwrite
+    if (e.key) {
+        input = e.key;
+        shiftPressed = e.shiftKey;
+    } else {
+        console.log('Input Detection Error');
+    }
+    switch (input){
+        // numbers
+        case 'btn-0':       case '0':           x = 0;          break;
+        case 'btn-1':       case '1':           x = 1;          break;
+        case 'btn-2':       case '2':           x = 2;          break;
+        case 'btn-3':       case '3':           x = 3;          break;
+        case 'btn-4':       case '4':           x = 4;          break;
+        case 'btn-5':       case '5':           x = 5;          break;
+        case 'btn-6':       case '6':           x = 6;          break;
+        case 'btn-7':       case '7':           x = 7;          break;
+        case 'btn-8':       case '8':           x = 8;          break;
+        case 'btn-9':       case '9':           x = 9;          break;
+        // operators
+        case 'btn-sign':    case shiftPressed && '-':       x = 'Sign';     break;
+        case 'btn-add':     case '+':           x = '+';        break;
+        case 'btn-sub':     case '-':           x = '-';        break;
+        case 'btn-mult':    case '*':           x = '*';        break;
+        case 'btn-div':     case '/':           x = '/';        break;
+        case 'btn-decimal': case '.':           x = '.';        break;
+        case 'btn-equal':   case 'Enter':       x = '=';        break;
+        case 'btn-delete':  case 'Delete':
+        case 'Backspace':                       x = 'Delete';   break;
+        case 'btn-clear':   case 'Backspace':   x = 'Clear';    break;
+        // invalid cases
+        default:
+            x = 'switchE';
+            console.log('switch invalid');
+    }
+    console.log(input);
+    return x;
+}
 
 const display = document.getElementById("display");
 display.innerText = 0;
@@ -59,43 +140,20 @@ function divZeroError() {
     display.innerText = '2 \u221E & B ' + `\u23FB D`;
 }
 
-function btnChoice(e){
-    let input = e.target.id;
-    switch (input){
-        // numbers
-        case 'btn-0': x = 0; break;
-        case 'btn-1': x = 1; break;
-        case 'btn-2': x = 2; break;
-        case 'btn-3': x = 3; break;
-        case 'btn-4': x = 4; break;
-        case 'btn-5': x = 5; break;
-        case 'btn-6': x = 6; break;
-        case 'btn-7': x = 7; break;
-        case 'btn-8': x = 8; break;
-        case 'btn-9': x = 9; break;
-        // operators
-        case 'btn-sign':    x = 'Sign'; break;
-        case 'btn-add':     x = '+'; break;
-        case 'btn-sub':     x = '-'; break;
-        case 'btn-mult':    x = '*'; break;
-        case 'btn-div':     x = '/'; break;
-        case 'btn-decimal': x = '.'; break;
-        case 'btn-equal':   x = '='; break;
-        case 'btn-delete':  x = 'Delete'; break;
-        case 'btn-clear':   x = 'Clear'; break;
-        default: x = 'switchE';
-    }
-    return x;
-}
-
 function calculator(e){
-    let x = btnChoice(e);
-    
+    let x;
+    console.log(`Before x: ${x}`);
+    console.log('calulator executed');
+    x = btnChoice(e);
+    console.log(`After  x: ${x}`);
+    console.log(e);
     if (x === 0 && numString === '' && op === undefined) {
     } else if (Number.isInteger(x)) {
-        numString += `${x}`;
-        display.innerText = numString;
-        //console.log(`extend string with ${x}`);
+        if (numString.length < maxInputLength) {
+            numString += `${x}`;
+            display.innerText = numString;
+            //console.log(`extend string with ${x}`);            
+        }
     } else {
         switch (x){
             case '.':
@@ -246,22 +304,4 @@ function calculator(e){
     }
 }
 
-// Detecting keyboard buttons in javascript
-// https://stackoverflow.com/questions/16089421/how-do-i-detect-keypresses-in-javascript
-// https://www.techcoil.com/blog/how-to-detect-keyboard-presses-made-to-the-browser-screen-with-javascript/
-// https://howtodoinjava.com/jquery/jquery-difference-between-keypress-and-keydown-events/
-document.addEventListener('keydown', onKeyPressed);
 
-function onKeyPressed(e) {
-    var keyCode = e.keyCode;
-    var key = e.key;
-    // Lets you see the code livetime
-    console.log(`Code: ${keyCode} Key: ${key}`);
-}
-
-document.addEventListener('keypress', detectKeyboardNumbers);
-function detectKeyboardNumbers(e){
-    var keyCode = e.keyCode;
-    var key = e.key;
-    
-}
