@@ -14,7 +14,8 @@ function divide(a,b){
     return a / b;
 }
 
-let maxInputLength = 10;
+let maxInputLength = 12;
+let maxOutputLength = 8;
 
 function operate(operator,num1,num2){
     let answer = 0;
@@ -30,24 +31,28 @@ function operate(operator,num1,num2){
         answer = "Error-Operate";
     }
     
-    // Round to a specific number of significant digits
-    // https://www.w3schools.com/jsref/jsref_toprecision.asp
-    
     // Issues with too many trailing zeros or outputting too large a number
+    // force round to a specific number of significant digits:
+    // https://www.w3schools.com/jsref/jsref_toprecision.asp
+    // eliminate trailing zeros (change '6.0000' to just '6'):
+    // https://stackoverflow.com/questions/16471419/javascript-trim-toprecision-trailing-zeros
+    // to detect an exponential:
+    // https://regexr.com/
+    // console.log(`Answer Before: ${answer} TypeOf: ${typeof answer}`);
+    answer = answer.toPrecision(maxOutputLength);
     
-    //answer = parseFloat(answer);
-    console.log(`Answer Before: ${answer}`);
-    //answer = answer.toPrecision(precision);
-    //answer = answer.toFixed(0);
-    console.log(`Answer After:  ${answer}`);
-    
-    
+    if (!/e/.test(answer)) {
+        // console.log(`Before eliminating Zeros: answer: ${answer} num1: ${num1} num2: ${num2}`);
+        answer *= 1;
+        // console.log(`After  eliminating Zeros: answer: ${answer} num1: ${num1} num2: ${num2}`);
+    } else {
+        // console.log(`Exponential: answer: ${answer} num1: ${num1} num2: ${num2}`);
+    }
+    // console.log(`Answer After:  ${answer} TypeOf: ${typeof answer}`);
     return answer;
 }
 
 const allButtons = document.querySelectorAll('.btn');
-//console.log(allButtons);
-// addEventListener will not work if the first portion of its inputs is wrong (like 'onclick' instead of 'click')
 allButtons.forEach(item => {item.addEventListener('click', calculator)}); 
 
 // Detecting keyboard buttons in javascript
@@ -57,6 +62,7 @@ allButtons.forEach(item => {item.addEventListener('click', calculator)});
 
 document.addEventListener('keydown', calculator);
 
+// Lets you detect browser and keyboard inputs:
 /*
 document.addEventListener('keydown', onKeyDown);
 function onKeyDown(e) {
@@ -78,38 +84,26 @@ function onKeyPress(e) {
 function btnChoice(e){
     let input;
     let shiftPressed;
-    console.log(`**********`);
-    console.log(`e.target.id: ${e.target.id}`);
-    console.log(`e.key: ${e.key}`);
-    console.log(`e.shiftKey: ${e.shiftKey}`);
+    // console.log(`**********`);
+    // console.log(`e.target.id: ${e.target.id}`);
+    // console.log(`e.key: ${e.key}`);
+    // console.log(`e.shiftKey: ${e.shiftKey}`);
     // Lets you see the code livetime
-    //console.log(`Down  Code: ${keyCode} Key: ${key}`);
+    // console.log(`Down  Code: ${keyCode} Key: ${key}`);
     if (e.target.id) {
         input = e.target.id;
-        console.log(`Browser Button: ${input}`);
-        //e.target.id = undefined;
+        //console.log(`Browser Button: ${input}`);
     }
     // Keyboard input needs to be in its own if statement or button inputs always overwrite
     if (e.key) {
         input = e.key;
         shiftPressed = e.shiftKey;
-        console.log(`Numpad  Button: ${input}`);
-        // If e.target.id is not reset WITHIN THIS CODE then as stated in the below bug
+        // console.log(`Numpad  Button: ${input}`);
+        // If e.target.id is not reset WITHIN THIS CODE then
         // the 'btnChoice' function executes a second time and you can't go between
         // browser and keyboard input without bugy behavior (can't reuse calculated answers, etc.)
         e.target.id = undefined;
     }
-    
-    // BUG BUG BUG
-    // if you input:
-    // Browser: 8
-    // Numpad" - 2 Enter
-    // Then you will get 68 because the e.target.id doesn't reset to 'undefined' like e.key does
-    // also the 'btnChoice' function seems to automatically execute an extra time when going from
-    // browser to keyboard and then pressing the keyboard 'Enter' to execute but NOT the other way
-    // around; going from keyboard to browser and pressing the browser '=' doesn't execute again
-    // Eliminating this prevents using previous calculation solutions (8-2=+4 leads to 10)
-    //e.target.id = undefined;
     
     switch (input){
         // numbers
@@ -137,9 +131,9 @@ function btnChoice(e){
         // invalid cases
         default:
             x = 'switchE';
-            console.log('switch invalid');
+            //console.log('switch invalid');
     }
-    console.log(`Input: ${input}`);
+    //console.log(`Input: ${input}`);
     return x;
 }
 
@@ -171,7 +165,7 @@ function calculator(e){
     x = btnChoice(e);
     console.log(`Before ALL op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
     //console.log(`After  x: ${x}`);
-    console.log(`x: ${x}`);
+    //console.log(`x: ${x}`);
     if (x === 0 && numString === '' && op === undefined) {
         // Prevents spamming 0's at the beginning
     } else if (Number.isInteger(x)) {
@@ -180,7 +174,7 @@ function calculator(e){
             display.innerText = numString;
             // maybe this num2 update is needed?
             //num2 = parseFloat(numString);
-            console.log(`extend string with ${x}`);            
+            //console.log(`extend string with ${x}`);            
         }
     } else {
         switch (x){
@@ -195,47 +189,63 @@ function calculator(e){
                 }
                 break;
             case 'Sign':
+                console.log(`Before Sign Change op: ${op} num1: ${num1} num2: ${num2} numString: ${numString} typeOf numstring: ${typeof numString}`);
+                // Make sure it is a string or errors occur
+                numString = numString.toString();
                 if (numString === '0' || (numString === '' && num1 === 0)) {
-                    //console.log('Sign: do nothing');
+                    console.log('Sign: do nothing');
                 } else if (/\-/.test(numString)){
                     numString = numString.slice(1);
                     display.innerText = numString;
-                    //console.log('Sign: sign remove');
+                    console.log('Sign: sign remove');
                 } else if (numString !== '') {
                     numString = '-' + numString;
                     display.innerText = numString;
-                    //console.log('Sign: sign add');
-                } else {
+                    console.log('Sign: sign add');
+                } else if (num1 != 0) {
                     // Sign change on previously calculated answer
-                    num1 *= -1;
-                    display.innerText = num1;
-                    //console.log('Sign: else');
+                    numString = num1 * -1;
+                    display.innerText = numString;
+                    console.log('Sign: use previous answer and change sign');
+                } else {
+                    console.log('Sign: else');
                 }
+                console.log(`After Sign Change op: ${op} num1: ${num1} num2: ${num2} numString: ${numString} typeOf numstring: ${typeof numString}`);
                 break;
             case 'Delete':
+                console.log(`Before Delete op: ${op} num1: ${num1} num2: ${num2} numString: ${numString} typeOf numstring: ${typeof numString}`);
                 if (numString === '' || numString === '0') {
                     //console.log('Delete: no number');
+                } else if(/e/.test(numString)) {
+                    // If there is an exponent in numstring do nothing
+                   /*
+                    if (/e/.test(num1)) {
+                        console.log('Detected exponent in num1');
+                    }
+                    console.log('Exponential detected');
+                    */
                 } else if (/\-/.test(numString)) {
                     if (numString.length > 2){
                         numString = numString.slice(0,-1);
                         display.innerText = numString;
-                        //console.log('Delete (-): > 2 length');
+                        console.log('Delete (-): > 2 length');
                     } else {
                         numString = '';
                         display.innerText = '0';
-                        //console.log('Delete (-): <= 2 length');
+                        console.log('Delete (-): <= 2 length');
                     }
                 } else {
                     if (numString.length > 1) {
                         numString = numString.slice(0,-1);
                         display.innerText = numString;
-                        //console.log('Delete (+): > 1 length');
+                        console.log('Delete (+): > 1 length');
                     } else {
                         numString = '';
                         display.innerText = '0';
-                        //console.log('Delete (+): <= 1 length');
+                        console.log('Delete (+): <= 1 length');
                     }
                 }
+                console.log(`After Delete op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
                 break;
             case 'Clear':
                 resetAll();
@@ -273,17 +283,17 @@ function calculator(e){
                         display.innerText = num1;
                         numString = `${num1}`;
                         console.log('Normal solution after = operation');
+                        // Edge case where you can get a leading 0
+                        if (numString === '0') {
+                            numString = '';
+                        }
                     }
                     
                     op = undefined;
-                    // BUG BUG BUG below
-                    //num1 = 0;
-                    //num2 = 0;
-                    //numString = '';
-                    // BUG BUG BUG above
-                    console.log(`After = op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                    //numString='';
+                    //console.log(`After = op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
                 } else {
-                    console.log('Error in = code');
+                    //console.log('Error in = code');
                 }
                 break;
 
@@ -296,47 +306,47 @@ function calculator(e){
                 if (op === undefined) {
                     if (numString === '') {
                         numString = '0';
-                        console.log('Numstring set to 0');
+                        //console.log('Numstring set to 0');
                     }
                     op = x;
-                    console.log(`sign defined as ${op}`);
+                    //console.log(`sign defined as ${op}`);
                     num1 = parseFloat(numString);
                     numString = '';
                 } else {
-                    console.log(`01 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                    //console.log(`01 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
                     if (numString === '') {
                         num2 = num1;
-                        console.log('A');
+                        //console.log('A');
                     }
                     else {
                         num2 = parseFloat(numString);
-                        console.log('B');
+                        //console.log('B');
                     }
-                    console.log(`02 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                    //console.log(`02 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
                     num1 = operate(op,num1,num2);
-                    console.log(`03 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                    //console.log(`03 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
 
                     // Catches dividing by zero and the edge case of num1 = NaN
                     if (x === '/' && num2 === 0) {
                         divZeroError();
-                        console.log('Divide by zero');
+                        //console.log('Divide by zero');
                         num1 = 0;
                         num2 = 0;
                         resetAll();
                     } else {
-                        console.log('Not divide by zero');
+                        //console.log('Not divide by zero');
                         display.innerText = num1;
                         op = x; // Allows stringing together multiple operators without using "="
                     }
                     
                     numString = '';
-                    console.log(`Next sign: ${op}`);
-                    console.log(`04 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                    //console.log(`Next sign: ${op}`);
+                    //console.log(`04 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
                 }
                 break;
         }
     }
-    console.log(`After ALL op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+    // console.log(`After ALL op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
 }
 
 
