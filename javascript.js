@@ -52,34 +52,20 @@ function operate(operator,num1,num2){
     return answer;
 }
 
-const allButtons = document.querySelectorAll('.btn');
-allButtons.forEach(item => {item.addEventListener('click', calculator)}); 
 
 // Detecting keyboard buttons in javascript
 // https://stackoverflow.com/questions/16089421/how-do-i-detect-keypresses-in-javascript
 // https://www.techcoil.com/blog/how-to-detect-keyboard-presses-made-to-the-browser-screen-with-javascript/
 // https://howtodoinjava.com/jquery/jquery-difference-between-keypress-and-keydown-events/
 
+const allButtons = document.querySelectorAll('.btn');
+allButtons.forEach(item => {item.addEventListener('click', calculator)}); 
+
 document.addEventListener('keydown', calculator);
 
-// Lets you detect browser and keyboard inputs:
-/*
-document.addEventListener('keydown', onKeyDown);
-function onKeyDown(e) {
-    var keyCode = e.keyCode;
-    var key = e.key;
-    // Lets you see the code livetime
-    console.log(`Down  Code: ${keyCode} Key: ${key}`);
-}
-
-document.addEventListener('keypress', onKeyPress);
-function onKeyPress(e) {
-    var keyCode = e.keyCode;
-    var key = e.key;
-    // Lets you see the code livetime
-    console.log(`Press Code: ${keyCode} Key: ${key}`);
-}
-*/
+// ISSUE: Entering browser numbers and operators and then executing them with the numpad
+// 'Enter' key seems to do another redundant execution of the 'calculator' function but
+// with not values for 'e.target.id' or 'e.key' thus executing the 'switchE' case
 
 function btnChoice(e){
     let input;
@@ -88,11 +74,9 @@ function btnChoice(e){
     // console.log(`e.target.id: ${e.target.id}`);
     // console.log(`e.key: ${e.key}`);
     // console.log(`e.shiftKey: ${e.shiftKey}`);
-    // Lets you see the code livetime
-    // console.log(`Down  Code: ${keyCode} Key: ${key}`);
     if (e.target.id) {
         input = e.target.id;
-        //console.log(`Browser Button: ${input}`);
+        // console.log(`Browser Button: ${input}`);
     }
     // Keyboard input needs to be in its own if statement or button inputs always overwrite
     if (e.key) {
@@ -131,9 +115,9 @@ function btnChoice(e){
         // invalid cases
         default:
             x = 'switchE';
-            //console.log('switch invalid');
+            // console.log('switch invalid');
     }
-    //console.log(`Input: ${input}`);
+    // console.log(`Input: ${input}`);
     return x;
 }
 
@@ -160,20 +144,15 @@ function divZeroError() {
 
 function calculator(e){
     let x;
-    //console.log(`Before x: ${x}`);
-    //console.log('calulator executed');
     x = btnChoice(e);
-    console.log(`Before ALL op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
-    //console.log(`After  x: ${x}`);
-    //console.log(`x: ${x}`);
+    // console.log(`Before ALL op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+    // console.log(`After  x: ${x}`);
     if (x === 0 && numString === '' && op === undefined) {
         // Prevents spamming 0's at the beginning
     } else if (Number.isInteger(x)) {
         if (numString.length < maxInputLength) {
             numString += `${x}`;
             display.innerText = numString;
-            // maybe this num2 update is needed?
-            //num2 = parseFloat(numString);
             //console.log(`extend string with ${x}`);            
         }
     } else {
@@ -189,33 +168,34 @@ function calculator(e){
                 }
                 break;
             case 'Sign':
-                console.log(`Before Sign Change op: ${op} num1: ${num1} num2: ${num2} numString: ${numString} typeOf numstring: ${typeof numString}`);
+                // console.log(`Before Sign Change op: ${op} num1: ${num1} num2: ${num2} numString: ${numString} typeOf numstring: ${typeof numString}`);
                 // Make sure it is a string or errors occur
                 numString = numString.toString();
                 if (numString === '0' || (numString === '' && num1 === 0)) {
-                    console.log('Sign: do nothing');
+                    // console.log('Sign: do nothing');
                 } else if (/\-/.test(numString)){
                     numString = numString.slice(1);
                     display.innerText = numString;
-                    console.log('Sign: sign remove');
+                    // console.log('Sign: sign remove');
                 } else if (numString !== '') {
                     numString = '-' + numString;
                     display.innerText = numString;
-                    console.log('Sign: sign add');
+                    // console.log('Sign: sign add');
                 } else if (num1 != 0) {
                     // Sign change on previously calculated answer
                     numString = num1 * -1;
+                    numString = numString.toString();
                     display.innerText = numString;
-                    console.log('Sign: use previous answer and change sign');
+                    // console.log('Sign: use previous answer and change sign');
                 } else {
-                    console.log('Sign: else');
+                    // console.log('Sign: else');
                 }
-                console.log(`After Sign Change op: ${op} num1: ${num1} num2: ${num2} numString: ${numString} typeOf numstring: ${typeof numString}`);
+                // console.log(`After Sign Change op: ${op} num1: ${num1} num2: ${num2} numString: ${numString} typeOf numstring: ${typeof numString}`);
                 break;
             case 'Delete':
-                console.log(`Before Delete op: ${op} num1: ${num1} num2: ${num2} numString: ${numString} typeOf numstring: ${typeof numString}`);
+                // console.log(`Before Delete op: ${op} num1: ${num1} num2: ${num2} numString: ${numString} typeOf numstring: ${typeof numString}`);
                 if (numString === '' || numString === '0') {
-                    //console.log('Delete: no number');
+                    // console.log('Delete: no number');
                 } else if(/e/.test(numString)) {
                     // If there is an exponent in numstring do nothing
                    /*
@@ -245,7 +225,7 @@ function calculator(e){
                         console.log('Delete (+): <= 1 length');
                     }
                 }
-                console.log(`After Delete op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                // console.log(`After Delete op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
                 break;
             case 'Clear':
                 resetAll();
@@ -254,23 +234,23 @@ function calculator(e){
                 break;
             case '=':
                 if (op === undefined) {
-                    console.log('= 01');
+                    // console.log('= 01');
                     if (numString !== '') {
                         // nothing
-                        console.log('no op yet');
+                        // console.log('no op yet');
                     }
                 } else if (op !== undefined) {
-                    console.log('= 02');
+                    // console.log('= 02');
                     
                     if (numString === '') {
                         num2 = num1;
-                        console.log('no numString');
+                        // console.log('no numString');
                     } else {
                         num2 = parseFloat(numString);
-                        console.log('yes numString');
+                        // console.log('yes numString');
                     }
                     
-                    console.log(`Before = op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                    // console.log(`Before = op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
                     
                     num1 = operate(op,num1,num2);
                     
@@ -278,11 +258,11 @@ function calculator(e){
                     if (op === '/' && num2 === 0) {
                         divZeroError();
                         numString = '';
-                        console.log('Divide by zero after = operation');
+                        // console.log('Divide by zero after = operation');
                     } else {
                         display.innerText = num1;
                         numString = `${num1}`;
-                        console.log('Normal solution after = operation');
+                        // console.log('Normal solution after = operation');
                         // Edge case where you can get a leading 0
                         if (numString === '0') {
                             numString = '';
@@ -290,10 +270,10 @@ function calculator(e){
                     }
                     
                     op = undefined;
-                    //numString='';
-                    //console.log(`After = op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                    // numString='';
+                    // console.log(`After = op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
                 } else {
-                    //console.log('Error in = code');
+                    // console.log('Error in = code');
                 }
                 break;
 
@@ -306,44 +286,46 @@ function calculator(e){
                 if (op === undefined) {
                     if (numString === '') {
                         numString = '0';
-                        //console.log('Numstring set to 0');
+                        // console.log('Numstring set to 0');
                     }
                     op = x;
-                    //console.log(`sign defined as ${op}`);
+                    // console.log(`sign defined as ${op}`);
                     num1 = parseFloat(numString);
                     numString = '';
                 } else {
-                    //console.log(`01 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                    // console.log(`01 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
                     if (numString === '') {
                         num2 = num1;
-                        //console.log('A');
+                        // console.log('A');
                     }
                     else {
                         num2 = parseFloat(numString);
-                        //console.log('B');
+                        // console.log('B');
                     }
-                    //console.log(`02 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                    // console.log(`02 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
                     num1 = operate(op,num1,num2);
-                    //console.log(`03 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                    // console.log(`03 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
 
                     // Catches dividing by zero and the edge case of num1 = NaN
                     if (x === '/' && num2 === 0) {
                         divZeroError();
-                        //console.log('Divide by zero');
+                        // console.log('Divide by zero');
                         num1 = 0;
                         num2 = 0;
                         resetAll();
                     } else {
-                        //console.log('Not divide by zero');
+                        // console.log('Not divide by zero');
                         display.innerText = num1;
                         op = x; // Allows stringing together multiple operators without using "="
                     }
                     
                     numString = '';
-                    //console.log(`Next sign: ${op}`);
-                    //console.log(`04 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
+                    // console.log(`Next sign: ${op}`);
+                    // console.log(`04 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
                 }
                 break;
+            default:
+                // console.log('Calculator did nothing');
         }
     }
     // console.log(`After ALL op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
