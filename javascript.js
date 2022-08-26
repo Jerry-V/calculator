@@ -14,7 +14,7 @@ function divide(a,b){
     return a / b;
 }
 
-let maxInputLength = 12;
+let maxInputLength = 8;
 let maxOutputLength = 8;
 
 function operate(operator,num1,num2){

@@ -1,32 +1,65 @@
+body{
+    display: flex;
+    justify-content: center;
+}
+
 #mainContainer {
-    display: inline-block;
-    border: black solid 5px;
+    border: slategray solid 5px;
+    border-radius: 5px;
+    width: 350px;
 }
 
 #buttonsContainer{
-    display: flex;
-    border: red solid 5px;
-}
-
-#numbersContainer{
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-}
-
-#operatorsContainer{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    border-top: slategray solid 5px;
+    border-radius: 0px;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-auto-rows: auto auto;
+    background-color: slategray;
+    height: 300px;
 }
 
 #display{
-    font-size: 30px;
+    font-size: 35px;
+    height: 40px;
     font-family: monospace;
     text-align: right;
+    line-height: 40px;
+    padding: 10px;
+    background-color: lightgrey;
 }
 
+/* how to format allbuttons
+https://www.w3schools.com/csS/css3_buttons.asp */
+
 .btn{
-    width: 50px;
-    height: 50px;
+    width: auto;
     font-size: 30px;
     font-family:monospace;
+    text-align: center;
+    border-radius: 5px;
+    background-color: rgb(236, 156, 156);
+}
+
+/* !important causes this to overide the operators' custom colors
+https://stackoverflow.com/questions/8949194/css-hover-selector-for-background-color-not-working-after-dynamic-change-of-back */
+.btn:hover{
+    background-color: lightgrey!important;
+}
+
+/* how to get the enter button to span over 2 columns
+https://stackoverflow.com/questions/53199146/make-element-take-two-columns 
+https://www.w3schools.com/CSSref/pr_grid-column.asp */
+
+#btn-equal{
+    width: auto;
+    grid-column: 3 / span 2;
+}
+
+#btn-add, #btn-sub, #btn-mult, #btn-div{
+    background-color: rgb(128, 177, 128);
+}
+
+#btn-clear, #btn-delete, #btn-equal {
+    background-color: rgb(243, 227, 84);
 }
