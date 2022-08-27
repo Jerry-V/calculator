@@ -269,6 +269,11 @@ function calculator(e){
                         }
                     }
                     
+                    if (num1 === Infinity || num1 === Number.NEGATIVE_INFINITY) {
+                        divZeroError();
+                        resetAll();
+                    }
+                    
                     op = undefined;
                     // numString='';
                     // console.log(`After = op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
@@ -305,7 +310,6 @@ function calculator(e){
                     // console.log(`02 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
                     num1 = operate(op,num1,num2);
                     // console.log(`03 op: ${op} num1: ${num1} num2: ${num2} numString: ${numString}`);
-
                     // Catches dividing by zero and the edge case of num1 = NaN
                     if (x === '/' && num2 === 0) {
                         divZeroError();
@@ -317,6 +321,11 @@ function calculator(e){
                         // console.log('Not divide by zero');
                         display.innerText = num1;
                         op = x; // Allows stringing together multiple operators without using "="
+                    }
+                    
+                    if (num1 === Infinity || num1 === Number.NEGATIVE_INFINITY) {
+                        divZeroError();
+                        resetAll();
                     }
                     
                     numString = '';
