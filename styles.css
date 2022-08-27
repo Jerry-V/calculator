@@ -1,7 +1,11 @@
+/* 'Noto Sans Symbols 2' required in order to show the power symbol on all systems */
+*{
+    font-family: 'Noto Sans Mono', 'Noto Sans Symbols 2', monospace;
+}
+
 body{
     display: flex;
     justify-content: center;
-    font-family: 'Roboto Mono', monospace;
 }
 
 #mainContainer {
