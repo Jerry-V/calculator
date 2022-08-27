@@ -138,6 +138,7 @@ function resetAll(){
 
 // how to display unique characters
 // https://www.fileformat.info/info/unicode/char/23fb/index.htm
+// https://unicodepowersymbol.com/
 function divZeroError() {
     display.innerText = '2 \u221E & B ' + `\u23FB D`;
 }

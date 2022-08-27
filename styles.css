@@ -1,6 +1,7 @@
 body{
     display: flex;
     justify-content: center;
+    font-family: 'Roboto Mono', monospace;
 }
 
 #mainContainer {
@@ -22,7 +23,6 @@ body{
 #display{
     font-size: 35px;
     height: 40px;
-    font-family: monospace;
     text-align: right;
     line-height: 40px;
     padding: 10px;
@@ -35,7 +35,6 @@ https://www.w3schools.com/csS/css3_buttons.asp */
 .btn{
     width: auto;
     font-size: 30px;
-    font-family:monospace;
     text-align: center;
     border-radius: 5px;
     background-color: rgb(236, 156, 156);
